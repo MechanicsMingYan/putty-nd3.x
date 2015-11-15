@@ -19,6 +19,7 @@
 #ifndef DONE_TYPEDEFS
 #define DONE_TYPEDEFS
 typedef struct config_tag Config;
+typedef struct config_tag Conf;
 typedef struct backend_tag Backend;
 typedef struct terminal_tag Terminal;
 #endif
@@ -720,7 +721,7 @@ typedef struct {
     char *prompt;
     int echo;
     char *result;	/* allocated/freed by caller */
-    size_t result_len;
+    size_t resultsize;
 } prompt_t;
 typedef struct {
     /*

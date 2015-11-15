@@ -364,7 +364,7 @@ static void keylist_update(void)
 	     * Replace two spaces in the fingerprint with tabs, for
 	     * nice alignment in the box.
 	     */
-	    p = skey->alg->fingerprint(skey->data);
+	    p = ssh2_fingerprint(skey->alg, skey->data);
 	    strncpy(listentry, p, sizeof(listentry));
 	    p = strchr(listentry, ' ');
 	    if (p)

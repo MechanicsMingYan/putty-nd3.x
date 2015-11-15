@@ -365,7 +365,7 @@ static void serial_special(void *handle, Telnet_Special code)
 	 * and so will I. 
 	 */
 	serial->clearbreak_time =
-	    schedule_timer(TICKSPERSEC * 2 / 5, serbreak_timer, serial);
+	    schedule_timer(TICKSPERSEC * 2 / 5, (timer_fn_t)serbreak_timer, serial);
 	serial->break_in_progress = TRUE;
     }
 
