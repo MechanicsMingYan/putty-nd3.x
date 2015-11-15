@@ -288,7 +288,7 @@ int proxy_for_destination (SockAddr addr, const char *hostname,
      * Check the host name and IP against the hard-coded
      * representations of `localhost'.
      */
-    if (!conf_get_int(conf, CONF_even_proxy_localhost) &&
+    if (!conf->even_proxy_localhost &&
 	(sk_hostname_is_local(hostname) ||
 	 (addr && sk_address_is_local(addr))))
 	return 0;		       /* do not proxy */
@@ -302,7 +302,7 @@ int proxy_for_destination (SockAddr addr, const char *hostname,
 
     hostname_len = strlen(hostname);
 
-    exclude_list = conf_get_str(conf, CONF_proxy_exclude_list);
+    exclude_list = conf->proxy_exclude_list;
 
     /* now parse the exclude list, and see if either our IP
      * or hostname matches anything in it.
@@ -400,7 +400,7 @@ Socket new_connection(SockAddr addr, const char *hostname,
 	plug_proxy_accepting
     };
 
-    if (conf_get_int(conf, CONF_proxy_type) != PROXY_NONE &&
+    if (conf->proxy_type != PROXY_NONE &&
 	proxy_for_destination(addr, hostname, port, conf))
     {
 	Proxy_Socket ret;
@@ -437,7 +437,7 @@ Socket new_connection(SockAddr addr, const char *hostname,
 	ret->state = PROXY_STATE_NEW;
 	ret->negotiate = NULL;
 
-	type = conf_get_int(conf, CONF_proxy_type);
+	type = conf->proxy_type;
 	if (type == PROXY_HTTP) {
 	    ret->negotiate = proxy_http_negotiate;
 	} else if (type == PROXY_SOCKS4) {
@@ -459,9 +459,9 @@ Socket new_connection(SockAddr addr, const char *hostname,
 	pplug->proxy_socket = ret;
 
 	/* look-up proxy */
-	proxy_addr = sk_namelookup(conf_get_str(conf, CONF_proxy_host),
+	proxy_addr = sk_namelookup(conf->proxy_host,
 				   &proxy_canonical_name,
-				   conf_get_int(conf, CONF_addressfamily));
+				   conf->addressfamily);
 	if (sk_addr_error(proxy_addr) != NULL) {
 	    ret->error = "Proxy error: Unable to resolve proxy host name";
             sfree(pplug);
@@ -474,7 +474,7 @@ Socket new_connection(SockAddr addr, const char *hostname,
 	 * connected to our proxy server and port.
 	 */
 	ret->sub_socket = sk_new(proxy_addr,
-				 conf_get_int(conf, CONF_proxy_port),
+				 conf->proxy_port,
 				 privport, oobinline,
 				 nodelay, keepalive, (Plug) pplug);
 	if (sk_socket_error(ret->sub_socket) != NULL)
@@ -1232,7 +1232,7 @@ int proxy_socks5_negotiate (Proxy_Socket p, int change)
 
 char *format_telnet_command(SockAddr addr, int port, Conf *conf)
 {
-    char *fmt = conf_get_str(conf, CONF_proxy_telnet_command);
+    char *fmt = conf->proxy_telnet_command;
     char *ret = NULL;
     int retlen = 0, retsize = 0;
     int so = 0, eo = 0;
@@ -1386,7 +1386,7 @@ char *format_telnet_command(SockAddr addr, int port, Conf *conf)
 		eo += 4;
 	    }
 	    else if (strnicmp(fmt + eo, "user", 4) == 0) {
-		char *username = conf_get_str(conf, CONF_proxy_username);
+		char *username = conf->proxy_username;
 		int userlen = strlen(username);
 		ENSURE(userlen);
 		memcpy(ret+retlen, username, userlen);
@@ -1394,7 +1394,7 @@ char *format_telnet_command(SockAddr addr, int port, Conf *conf)
 		eo += 4;
 	    }
 	    else if (strnicmp(fmt + eo, "pass", 4) == 0) {
-		char *password = conf_get_str(conf, CONF_proxy_password);
+		char *password = conf->proxy_password;
 		int passlen = strlen(password);
 		ENSURE(passlen);
 		memcpy(ret+retlen, password, passlen);
@@ -1402,7 +1402,7 @@ char *format_telnet_command(SockAddr addr, int port, Conf *conf)
 		eo += 4;
 	    }
 	    else if (strnicmp(fmt + eo, "proxyhost", 9) == 0) {
-		char *host = conf_get_str(conf, CONF_proxy_host);
+		char *host = conf->proxy_host;
 		int phlen = strlen(host);
 		ENSURE(phlen);
 		memcpy(ret+retlen, host, phlen);
@@ -1410,7 +1410,7 @@ char *format_telnet_command(SockAddr addr, int port, Conf *conf)
 		eo += 9;
 	    }
 	    else if (strnicmp(fmt + eo, "proxyport", 9) == 0) {
-		int port = conf_get_int(conf, CONF_proxy_port);
+		int port = conf->proxy_port;
                 char pport[50];
 		int pplen;
                 sprintf(pport, "%d", port);
