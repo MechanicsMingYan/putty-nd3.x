@@ -92,7 +92,7 @@ static void logfopen_callback(void *handle, int mode)
 	ctx->state = L_ERROR;	       /* disable logging */
     } else {
 	fmode = (mode == 1 ? "ab" : "wb");
-	ctx->lgfp = f_open(ctx->currlogfilename, fmode, FALSE);
+	ctx->lgfp = f_open(&ctx->currlogfilename, fmode, FALSE);
 	if (ctx->lgfp)
 	    ctx->state = L_OPEN;
 	else
@@ -157,7 +157,7 @@ void logfopen(void *handle)
     /* substitute special codes in file name */
     xlatlognam(&ctx->currlogfilename, ctx->cfg.logfilename,&ctx->cfg, &tm);
 
-    ctx->lgfp = f_open(ctx->currlogfilename, "r", FALSE);  /* file already present? */
+    ctx->lgfp = f_open(&ctx->currlogfilename, "r", FALSE);  /* file already present? */
     if (ctx->lgfp) {
 	fclose(ctx->lgfp);
 	if (ctx->cfg.logxfovr != LGXF_ASK) {

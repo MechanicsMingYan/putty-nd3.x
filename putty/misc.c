@@ -889,17 +889,17 @@ void debug_memdump(const void *buf, int len, int L)
 int conf_launchable(Conf *conf)
 {
     if (conf->protocol == PROT_SERIAL)
-	return conf_get_str(conf, CONF_serline)[0] != 0;
+	return conf->serline[0] != 0;
     else
-	return conf_get_str(conf, CONF_host)[0] != 0;
+	return conf->host[0] != 0;
 }
 
 char const *conf_dest(Conf *conf)
 {
-    if (conf_get_int(conf, CONF_protocol) == PROT_SERIAL)
-	return conf_get_str(conf, CONF_serline);
+    if (conf->protocol == PROT_SERIAL)
+	return conf->serline;
     else
-	return conf_get_str(conf, CONF_host);
+	return conf->host;
 }
 
 #ifndef PLATFORM_HAS_SMEMCLR
@@ -936,7 +936,7 @@ void smemclr(void *b, size_t n) {
          * optimised the memset into only zeroing out the first byte.
          * This should be robust.)
          */
-        vp = b;
+        vp = (volatile char *)b;
         while (*vp) vp++;
     }
 }
@@ -1243,7 +1243,7 @@ int autocmd_get_passwd_input(void* frontend, prompts_t *p, Config *cfg)
     const char* autocmd = get_autocmd(frontend, cfg, recv_buf, recv_len, 1);
     if (autocmd == NULL)
         return -1;
-    strncpy(pr->result, autocmd, pr->result_len);
+	strncpy(pr->result, autocmd, pr->resultsize);
     
     return 1;
 }

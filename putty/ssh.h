@@ -748,6 +748,7 @@ enum {
     SSH_KEYTYPE_OPENSSH_AUTO,
     SSH_KEYTYPE_OPENSSH_PEM,
     SSH_KEYTYPE_OPENSSH_NEW,
+	SSH_KEYTYPE_OPENSSH,
     SSH_KEYTYPE_SSHCOM,
     /*
      * Public-key-only formats, which we still want to be able to read

@@ -106,8 +106,8 @@ int cmdline_get_passwd_input(prompts_t *p, unsigned char *in, int inlen) {
 	//return 0;
 
     strncpy(p->prompts[0]->result, cmdline_password,
-	    p->prompts[0]->result_len);
-    p->prompts[0]->result[p->prompts[0]->result_len-1] = '\0';
+	    p->prompts[0]->resultsize);
+    p->prompts[0]->result[p->prompts[0]->resultsize-1] = '\0';
     memset(cmdline_password, 0, strlen(cmdline_password));
     sfree(cmdline_password);
     cmdline_password = NULL;

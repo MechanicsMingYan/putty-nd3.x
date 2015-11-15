@@ -3557,7 +3557,7 @@ static void ssh_hostport_setup(const char *host, int port, Conf *conf,
                                char **savedhost, int *savedport,
                                char **loghost_ret)
 {
-    char *loghost = conf_get_str(conf, CONF_loghost);
+    char *loghost = conf->loghost;
     if (loghost_ret)
         *loghost_ret = loghost;
 
@@ -5323,7 +5323,7 @@ static void ssh_setup_portfwd(Ssh ssh, Conf *conf)
 		    ssh2_pkt_addbool(pktout, 0);/* _don't_ want reply */
 		    if (epf->saddr) {
 			ssh2_pkt_addstring(pktout, epf->saddr);
-		    } else if (conf_get_int(conf, CONF_rport_acceptall)) {
+		    } else if (conf->rport_acceptall) {
 			/* XXX: rport_acceptall may not represent
 			 * what was used to open the original connection,
 			 * since it's reconfigurable. */
@@ -5415,7 +5415,7 @@ static void ssh_setup_portfwd(Ssh ssh, Conf *conf)
 		pf->dport = epf->dport;
                 if (epf->saddr) {
                     pf->shost = dupstr(epf->saddr);
-                } else if (conf_get_int(conf, CONF_rport_acceptall)) {
+                } else if (conf->rport_acceptall) {
                     pf->shost = dupstr("");
                 } else {
                     pf->shost = dupstr("localhost");
@@ -11160,7 +11160,7 @@ static void ssh_reconfig(void *handle, Conf *conf)
     if (ssh->portfwds)
 	ssh_setup_portfwd(ssh, conf);
 
-    rekey_time = conf_get_int(conf, CONF_ssh_rekey_time);
+    rekey_time = conf->ssh_rekey_time;
     if (conf_get_int(ssh->conf, CONF_ssh_rekey_time) != rekey_time &&
 	rekey_time != 0) {
 	unsigned long new_next = ssh->last_rekey + rekey_time*60*TICKSPERSEC;
@@ -11184,7 +11184,7 @@ static void ssh_reconfig(void *handle, Conf *conf)
     }
 
     if (conf_get_int(ssh->conf, CONF_compression) !=
-	conf_get_int(conf, CONF_compression)) {
+	conf->compression) {
 	rekeying = "compression setting changed";
 	rekey_mandatory = TRUE;
     }
@@ -11196,7 +11196,7 @@ static void ssh_reconfig(void *handle, Conf *conf)
 	rekey_mandatory = TRUE;
     }
     if (conf_get_int(ssh->conf, CONF_ssh2_des_cbc) !=
-	conf_get_int(conf, CONF_ssh2_des_cbc)) {
+	conf->ssh2_des_cbc) {
 	rekeying = "cipher settings changed";
 	rekey_mandatory = TRUE;
     }
